@@ -1,29 +1,15 @@
 import pickle
 
-from flask import Flask, request, jsonify
+def load(filename):
+    with open(filename, "rb") as f_in:
+        return  pickle.load(f_in)
 
-model_file = "model_C=1.0.bin"
+dv = load("dv.bin")
+model = load("model1.bin")
 
-with open(model_file, "rb") as f_in:
-    dv, model1 = pickle.load(f_in)
+client = {"job": "retired", "duration": 445, "poutcome": "success"}
 
-app = Flask("approve")
+X = dv.transform([client])
+y_pred = model.predict_proba(X)[0, 1]
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    client = request.get_json()
-
-    X = dv.transform([client])
-    y_pred = model1.predict_proba(X)[0, 1]
-    poutcome = y_pred >= 0.5
-
-    result = {
-        "approve_probability": float(y_pred),
-        "poutcome": bool(poutcome)
-    }
-
-    return jsonify(result)
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=9696)
-
+print(y_pred)
