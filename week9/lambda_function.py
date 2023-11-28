@@ -8,7 +8,7 @@ classes = ["bee", "wasp"]
 
 preprocess = create_preprocessor("xception", target_size=(150, 150))
 
-interpreter = tflite.Interpreter(model_path=MODEL_NAME)
+interpreter = tflite.Interpreter(model_path=MODEL_NAME) #make sure to use the modle that provided
 interpreter.allocate_tensors()
 
 input_index = interpreter.get_input_details()[0]["index"]
