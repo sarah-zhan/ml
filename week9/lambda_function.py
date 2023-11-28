@@ -3,12 +3,12 @@ from keras_image_helper import create_preprocessor
 
 
 # url = "https://habrastorage.org/webt/rt/d9/dh/rtd9dhsmhwrdezeldzoqgijdg8a.jpeg"
-
+MODEL_NAME = "bees-wasps-v2.tflite"
 classes = ["bee", "wasp"]
 
 preprocess = create_preprocessor("xception", target_size=(150, 150))
 
-interpreter = tflite.Interpreter(model_path="bees-wasps.tflite")
+interpreter = tflite.Interpreter(model_path=MODEL_NAME)
 interpreter.allocate_tensors()
 
 input_index = interpreter.get_input_details()[0]["index"]
@@ -24,14 +24,15 @@ def predict(url):
     preds = interpreter.get_tensor(output_index) # Get the output tensor
 
     float_prediction = preds[0].tolist()
-
     return dict(zip(classes, float_prediction))
+
 
 
 def lambda_handler(event, context):
     url = event["url"]
     result = predict(url)
     return result
+
 
 
 
